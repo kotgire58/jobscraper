@@ -8,7 +8,7 @@ SHEET_NAME = os.getenv("SHEET_NAME", "Hidden Jobs Tracker")
 LOG_FILE = "job_log.json"
 
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("job-sheet-tracker-f24c6fa3179a.json", scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name("job-sheet-tracker.json", scope)
 client = gspread.authorize(creds)
 
 try:
