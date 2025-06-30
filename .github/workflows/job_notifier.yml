@@ -3,13 +3,15 @@ name: Job Notifier
 on:
   schedule:
     - cron: "0 */12 * * *"  # Every 12 hours
-  workflow_dispatch:       # Allow manual triggering
+  workflow_dispatch:        # Manual trigger support
 
 jobs:
-  notify:
+  run-job-scraper:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -21,15 +23,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run job scraper
+      - name: Run scraper
         run: python job_scraper.py
 
-      - name: Push to Google Sheets
+      - name: Push jobs to Google Sheets
         run: python push_to_sheets.py
 
-      - name: Send Email & Discord Summary
+      - name: Send Email + Discord notification
         run: python send_summary.py
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
