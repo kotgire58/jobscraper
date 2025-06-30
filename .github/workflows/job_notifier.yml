@@ -28,13 +28,7 @@ jobs:
         run: |
           echo "$GCP_CREDENTIALS_JSON_BASE64" | base64 -d > job-sheet-tracker.json
 
-      - name: 🔞 Debug: Check Credentials File
-        run: |
-          echo "Current directory: $(pwd)"
-          echo "Listing contents:"
-          ls -alh
-          echo "Preview of credentials file:"
-          bash -c 'head -n 10 job-sheet-tracker.json || echo "File missing or unreadable"'
+      
 
       - name: ✅ Run Job Scraper
         run: python job_scraper.py
