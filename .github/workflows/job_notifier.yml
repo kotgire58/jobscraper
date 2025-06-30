@@ -34,7 +34,7 @@ jobs:
           echo "Listing contents:"
           ls -alh
           echo "Preview of credentials file:"
-          head -n 10 job-sheet-tracker.json || echo "File missing or unreadable"
+          bash -c 'head -n 10 job-sheet-tracker.json || echo "File missing or unreadable"'
 
       - name: ✅ Run Job Scraper
         run: python job_scraper.py
