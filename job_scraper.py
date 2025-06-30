@@ -101,15 +101,15 @@ def save_jobs(jobs):
 def main():
     all_jobs = []
     print("🔍 Scraping Greenhouse jobs...")
-    for slug in GREENHOUSE_SLUGS[:100]:
+    for slug in GREENHOUSE_SLUGS:
         all_jobs.extend(fetch_greenhouse_jobs(slug))
         print(slug)
         time.sleep(0.2)
 
-    # print("🔍 Scraping Lever jobs...")
-    # for slug in LEVER_SLUGS:
-        # all_jobs.extend(fetch_lever_jobs(slug))
-        # time.sleep(0.2)
+    print("🔍 Scraping Lever jobs...")
+    for slug in LEVER_SLUGS:
+        all_jobs.extend(fetch_lever_jobs(slug))
+        time.sleep(0.2)
 
     filtered = [j for j in all_jobs if is_recent(j['date'])]
     new_jobs = save_jobs(filtered)
