@@ -1,37 +1,45 @@
-name: Job Notifier
+# .github/workflows/job_notifier.yml
+name: 🔁 Job Scraper & Notifier (12hr)
 
 on:
   schedule:
-    - cron: "0 */12 * * *"  # Every 12 hours
-  workflow_dispatch:        # Manual trigger support
+    - cron: '0 */12 * * *' # Every 12 hours
+  workflow_dispatch:       # Allow manual run
 
 jobs:
-  run-job-scraper:
+  scrape-and-notify:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: 📥 Checkout Repo
         uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: 🐍 Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
+          python-version: '3.10'
 
-      - name: Install dependencies
+      - name: 📦 Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run scraper
+      - name: 🛠️ Restore Google Sheets Credentials
+        run: |
+          echo "$GCP_CREDENTIALS_JSON_BASE64" | base64 -d > job-sheet-tracker.json
+
+      - name: ✅ Run Job Scraper
         run: python job_scraper.py
 
-      - name: Push jobs to Google Sheets
+      - name: 📊 Update Google Sheet
         run: python push_to_sheets.py
 
-      - name: Send Email + Discord notification
-        run: python send_summary.py
-        env:
-          EMAIL_USER: ${{ secrets.EMAIL_USER }}
-          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      - name: 📣 Send Notifications
+        run: python send_notifications.py
+
+    env:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
+      EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+      EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
+      GCP_CREDENTIALS_JSON_BASE64: ${{ secrets.GCP_CREDENTIALS_JSON_BASE64 }}
