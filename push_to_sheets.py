@@ -9,7 +9,7 @@ from googleapiclient.discovery import build
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 SPREADSHEET_ID = os.getenv("GOOGLE_SHEET_ID")
 SHEET_NAME = "Job Tracker"
-CREDENTIALS_FILE = "job-sheet-tracker-f24c6fa3179a.json"
+CREDENTIALS_FILE = "job-sheet-tracker.json"
 RESULTS_FILE = "job_log.json"
 
 # Define the order of columns
