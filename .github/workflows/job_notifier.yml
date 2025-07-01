@@ -1,4 +1,4 @@
-name: 🔁 Job Scraper & Notifier (12hr)
+name: 🔁 Job Scraper & Notifier (6hr)
 
 on:
   schedule:
