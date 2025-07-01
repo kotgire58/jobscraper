@@ -101,7 +101,7 @@ def save_jobs(jobs):
 def main():
     all_jobs = []
     print("🔍 Scraping Greenhouse jobs...")
-    for slug in GREENHOUSE_SLUGS[:50]:
+    for slug in GREENHOUSE_SLUGS[25:75]:
         all_jobs.extend(fetch_greenhouse_jobs(slug))
         print(slug)
         time.sleep(0.2)
