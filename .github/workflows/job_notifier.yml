@@ -29,6 +29,15 @@ jobs:
         env:
           GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}
 
+
+      - name: 🧪 DEBUG Preview secret content (partial)
+        run: |
+          echo "First 100 chars of secret:"
+          echo "$GCP_CREDENTIALS_JSON" | head -c 100
+        env:
+          GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}
+
+
       - name: 🧪 Debug Credentials File
         run: |
           echo "---- BEGIN FILE ----"
