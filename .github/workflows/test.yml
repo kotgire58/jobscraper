@@ -8,6 +8,8 @@ on:
 jobs:
   debug-secrets:
     runs-on: ubuntu-latest
+    environment: job  # 👈 this makes environment secrets accessible
+
     steps:
       - name: 🔎 Print all secret lengths
         run: |
