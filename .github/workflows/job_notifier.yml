@@ -25,9 +25,18 @@ jobs:
 
       - name: 🛠️ Restore Google Sheets Credentials
         run: |
-          echo "$GCP_CREDENTIALS_JSON" > job-sheet-tracker.json
+          printf "%s" "$GCP_CREDENTIALS_JSON" > job-sheet-tracker.json
         env:
           GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}
+
+      - name: 🧪 Debug Credentials File
+        run: |
+          echo "---- BEGIN FILE ----"
+          cat job-sheet-tracker.json || echo "(File not found or empty)"
+          echo "---- END FILE ----"
+          python -m json.tool job-sheet-tracker.json || echo "⚠️ Invalid JSON format"
+
+
 
       - name: ✅ Run Job Scraper
         run: python job_scraper.py
