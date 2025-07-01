@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🗕️ Checkout Repo
+      - name: 📅 Checkout Repo
         uses: actions/checkout@v3
 
       - name: 🖍️ Set up Python
@@ -19,21 +19,16 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: 📆 Install Dependencies
+      - name: 📦 Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: 🛠️ Restore Google Sheets Credentials
-        run: echo '${{ secrets.GCP_CREDENTIALS_JSON_BASE64 }}' > job-sheet-tracker.json
-
-      - name: 🔞 Debug: Check Credentials File
         run: |
-          echo "Current directory: $(pwd)"
-          echo "Listing contents:"
-          ls -alh
-          echo "Preview of credentials file:"
-          bash -c 'head -n 10 job-sheet-tracker.json || echo "File missing or unreadable"'
+          echo '${{ secrets.GCP_CREDENTIALS_JSON_BASE64 }}' > job-sheet-tracker.json
+
+      
 
       - name: ✅ Run Job Scraper
         run: python job_scraper.py
