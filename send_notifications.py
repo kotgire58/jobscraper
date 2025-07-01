@@ -16,7 +16,7 @@ EMAIL_RECEIVER = os.getenv("EMAIL_RECEIVER")
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 
-JOB_FILE = "job_log.json"
+JOB_FILE = "newly_pushed_jobs.json"
 
 
 def load_jobs():
@@ -27,7 +27,7 @@ def load_jobs():
 
 def summarize_jobs(jobs):
     lines = []
-    for job in jobs[-10:]:  # last 10 jobs
+    for job in jobs:  # last 10 jobs
         line = f"**{job['title']}** at *{job['company']}*\n<{job['link']}>\nLocation: {job['location']}\n"
         lines.append(line)
     return "\n---\n".join(lines)

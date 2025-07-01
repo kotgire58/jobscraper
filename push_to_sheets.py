@@ -99,6 +99,10 @@ def push():
         return
 
     append_jobs(sheet, new_jobs)
+    # Save only the pushed jobs to a temp file for notifications
+    with open("newly_pushed_jobs.json", "w") as f:
+        json.dump(jobs, f, indent=2)
+
     print(f"✅ Pushed {len(new_jobs)} new jobs to Google Sheets")
 
 if __name__ == "__main__":
