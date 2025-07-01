@@ -26,16 +26,14 @@ jobs:
       - name: 🛠️ Restore Google Sheets Credentials
         run: |
           printf "%s" "$GCP_CREDENTIALS_JSON" > job-sheet-tracker.json
-        env:
-          GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}
+        
 
 
       - name: 🧪 DEBUG Preview secret content (partial)
         run: |
           echo "First 100 chars of secret:"
           echo "$GCP_CREDENTIALS_JSON" | head -c 100
-        env:
-          GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}
+        
 
 
       - name: 🧪 Debug Credentials File
@@ -71,3 +69,5 @@ jobs:
       EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
       EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
       EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
+      GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}
+
