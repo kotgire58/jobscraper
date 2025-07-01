@@ -41,22 +41,29 @@ def get_existing_links(sheet):
         return set()
 
 def append_jobs(sheet, jobs):
-    # Label row with timestamp
+    # Insert a header row before the new jobs
     now = datetime.now()
-    label = f"---- Added on {now.strftime('%Y-%m-%d')} {'Morning' if now.hour < 12 else 'Evening'} ----"
-    label_row = [label] + [""] * (len(HEADER) - 1)
+    label = f"🆕 New jobs from {now.strftime('%B %d')} - {'Morning' if now.hour < 12 else 'Evening'}"
+    separator_row = [[label] + [""] * (len(HEADER) - 1)]
 
-    # Job rows
-    job_rows = [[j[col] for col in HEADER] for j in jobs]
-
-    # Append label + jobs
     sheet.values().append(
         spreadsheetId=SPREADSHEET_ID,
         range=f"{SHEET_NAME}!A2",
         valueInputOption="RAW",
         insertDataOption="INSERT_ROWS",
-        body={"values": [label_row] + job_rows}
+        body={"values": separator_row}
     ).execute()
+
+    # Append actual job rows
+    rows = [[j[col] for col in HEADER] for j in jobs]
+    sheet.values().append(
+        spreadsheetId=SPREADSHEET_ID,
+        range=f"{SHEET_NAME}!A2",
+        valueInputOption="RAW",
+        insertDataOption="INSERT_ROWS",
+        body={"values": rows}
+    ).execute()
+
 
 
 def push():
