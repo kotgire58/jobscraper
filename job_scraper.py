@@ -101,13 +101,13 @@ def save_jobs(jobs):
 def main():
     all_jobs = []
     print("🔍 Scraping Greenhouse jobs...")
-    for slug in GREENHOUSE_SLUGS[:10]:
+    for slug in GREENHOUSE_SLUGS[:50]:
         all_jobs.extend(fetch_greenhouse_jobs(slug))
         print(slug)
         time.sleep(0.2)
 
     print("🔍 Scraping Lever jobs...")
-    for slug in LEVER_SLUGS[:10]:
+    for slug in LEVER_SLUGS[:1]:
         all_jobs.extend(fetch_lever_jobs(slug))
         time.sleep(0.2)
 
