@@ -1,4 +1,5 @@
 # push_to_sheets.py
+
 import os
 import json
 from datetime import datetime
@@ -30,6 +31,15 @@ def init_sheet(sheet):
             body={"values": [HEADER]}
         ).execute()
 
+def get_existing_links(sheet):
+    try:
+        result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=f"{SHEET_NAME}!D2:D").execute()
+        links = result.get('values', [])
+        return set(link[0] for link in links if link)
+    except Exception as e:
+        print(f"⚠️ Failed to fetch existing links: {e}")
+        return set()
+
 def append_jobs(sheet, jobs):
     rows = [[j[col] for col in HEADER] for j in jobs]
     sheet.values().append(
@@ -50,8 +60,16 @@ def push():
 
     sheet = get_service()
     init_sheet(sheet)
-    append_jobs(sheet, jobs)
-    print(f"✅ Pushed {len(jobs)} jobs to Google Sheets")
+
+    existing_links = get_existing_links(sheet)
+    new_jobs = [job for job in jobs if job["link"] not in existing_links]
+
+    if not new_jobs:
+        print("No new jobs to add.")
+        return
+
+    append_jobs(sheet, new_jobs)
+    print(f"✅ Pushed {len(new_jobs)} new jobs to Google Sheets")
 
 if __name__ == "__main__":
     push()
