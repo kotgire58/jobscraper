@@ -2,15 +2,16 @@ name: 🔁 Job Scraper & Notifier (12hr)
 
 on:
   schedule:
-    - cron: '0 */12 * * *'  # Every 12 hours
-  workflow_dispatch:
+    - cron: '0 */12 * * *'  # Runs every 12 hours
+  workflow_dispatch:        # Allow manual trigger
 
 jobs:
   scrape-and-notify:
     runs-on: ubuntu-latest
-    environment: job
+    environment: job  # 👈 Required for accessing environment-level secrets
 
-    env:  # ✅ Secrets available to all steps
+    env:
+      # ✅ Environment secrets — must be defined in the "job" environment
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
       EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
       EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
