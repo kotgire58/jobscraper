@@ -2,14 +2,21 @@ name: 🔁 Job Scraper & Notifier (12hr)
 
 on:
   schedule:
-    - cron: '0 */12 * * *'
+    - cron: '0 */12 * * *'  # Every 12 hours
   workflow_dispatch:
 
 jobs:
   scrape-and-notify:
     runs-on: ubuntu-latest
-    environment: job  # 👈 this makes environment secrets accessible
+    environment: job
 
+    env:  # ✅ Secrets available to all steps
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
+      EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+      EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
+      GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}
+      GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
 
     steps:
       - name: 📅 Checkout Repo
@@ -28,48 +35,19 @@ jobs:
       - name: 🛠️ Restore Google Sheets Credentials
         run: |
           printf "%s" "$GCP_CREDENTIALS_JSON" > job-sheet-tracker.json
-        
-
-
-      - name: 🧪 DEBUG Preview secret content (partial)
-        run: |
-          echo "First 100 chars of secret:"
-          echo "$GCP_CREDENTIALS_JSON" | head -c 100
-        
-
-
-      - name: 🧪 Debug Credentials File
-        run: |
-          echo "---- BEGIN FILE ----"
-          cat job-sheet-tracker.json || echo "(File not found or empty)"
-          echo "---- END FILE ----"
-          python -m json.tool job-sheet-tracker.json || echo "⚠️ Invalid JSON format"
-
-
 
       - name: ✅ Run Job Scraper
         run: python job_scraper.py
-      
-      - name: 🧪 Debug Credentials File
+
+      - name: 🧪 Skip Push if No Jobs
         run: |
-          echo "---- BEGIN FILE ----"
-          cat job-sheet-tracker.json || echo "(File not found or empty)"
-          echo "---- END FILE ----"
-          python -m json.tool job-sheet-tracker.json || echo "⚠️ Invalid JSON format"
-      
+          if [ ! -s job_log.json ]; then
+            echo "⚠️ No jobs to process. Skipping push and notify."
+            exit 0
+          fi
+
       - name: 📊 Update Google Sheet
         run: python push_to_sheets.py
-      
-      
-
 
       - name: 📣 Send Notifications
         run: python send_notifications.py
-
-    env:
-      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-      EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
-      EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-      EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
-      GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}
-
