@@ -34,6 +34,14 @@ jobs:
 
       - name: 📊 Update Google Sheet
         run: python push_to_sheets.py
+      
+      - name: 🧪 Debug Credentials File
+        run: |
+          echo "---- BEGIN FILE ----"
+          cat job-sheet-tracker.json || echo "(File not found or empty)"
+          echo "---- END FILE ----"
+          python -m json.tool job-sheet-tracker.json || echo "⚠️ Invalid JSON format"
+
 
       - name: 📣 Send Notifications
         run: python send_notifications.py
