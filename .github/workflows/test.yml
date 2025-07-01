@@ -1,25 +1,25 @@
 name: 🔍 Test GitHub Secrets
 
+
+
 on:
   workflow_dispatch
 
 jobs:
-  test-secrets:
+  debug-secrets:
     runs-on: ubuntu-latest
-
-    env:
-      TEST_SECRET: ${{ secrets.TEST_SECRET }}  # ❗ top-level env (less reliable for multiline)
-
     steps:
-      - name: 📥 Checkout repo
-        uses: actions/checkout@v3
-
-      - name: 🧪 Print secret from top-level env
+      - name: 🔎 Print all secret lengths
         run: |
-          echo "Top-level env TEST_SECRET: $TEST_SECRET"
-
-      - name: 🧪 Print secret from step-level env (recommended)
-        run: |
-          echo "Step-level env TEST_SECRET: $TEST_SECRET"
+          echo "GCP_CREDENTIALS_JSON length: ${#GCP_CREDENTIALS_JSON}"
+          echo "DISCORD_WEBHOOK length: ${#DISCORD_WEBHOOK}"
+          echo "EMAIL_SENDER length: ${#EMAIL_SENDER}"
+          echo "EMAIL_PASSWORD length: ${#EMAIL_PASSWORD}"
+          echo "EMAIL_RECEIVER length: ${#EMAIL_RECEIVER}"
         env:
-          TEST_SECRET: ${{ secrets.TEST_SECRET }}
+          GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
+
