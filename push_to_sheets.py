@@ -74,7 +74,7 @@ def append_jobs(sheet, jobs):
                         "range": {
                             "sheetId": sheet_id,
                             "startRowIndex": num_existing_rows,
-                            "endRowIndex": num_existing_rows
+                            "endRowIndex": num_existing_rows+1
                         },
                         "cell": {
                             "userEnteredFormat": {
