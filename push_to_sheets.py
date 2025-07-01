@@ -41,53 +41,31 @@ def get_existing_links(sheet):
         return set()
 
 def append_jobs(sheet, jobs):
-    # Prepare label row
+    if not jobs:
+        return
+
+    from datetime import datetime
+
+    rows = [[j[col] for col in HEADER] for j in jobs]
+
+    # Get current date and AM/PM label
     now = datetime.now()
     label = f"🆕 New jobs from {now.strftime('%B %d')} - {'Morning' if now.hour < 12 else 'Evening'}"
-    separator_row = [[label] + [""] * (len(HEADER) - 1)]
 
-    # Get current number of rows to know where to format
-    metadata = sheet.get(spreadsheetId=SPREADSHEET_ID).execute()
-    sheet_id = metadata["sheets"][0]["properties"]["sheetId"]
-    existing_values = sheet.values().get(
-        spreadsheetId=SPREADSHEET_ID,
-        range=f"{SHEET_NAME}!A:A"
-    ).execute()
-    num_existing_rows = len(existing_values.get("values", []))
+    # Add spacer row, label row (bold), spacer row
+    pre_row = ["" for _ in HEADER]
+    label_row = [label] + [""] * (len(HEADER) - 1)
+    all_rows = [pre_row, label_row, pre_row] + rows
 
-    # Append separator row
+    # Push to sheet
     sheet.values().append(
         spreadsheetId=SPREADSHEET_ID,
-        range=f"{SHEET_NAME}!A2",
+        range=f"{SHEET_NAME}!A1",
         valueInputOption="RAW",
         insertDataOption="INSERT_ROWS",
-        body={"values": separator_row}
+        body={"values": all_rows}
     ).execute()
 
-    # Format the separator row red
-    sheet.batchUpdate(
-        spreadsheetId=SPREADSHEET_ID,
-        body={
-            "requests": [
-                {
-                    "repeatCell": {
-                        "range": {
-                            "sheetId": sheet_id,
-                            "startRowIndex": num_existing_rows,
-                            "endRowIndex": num_existing_rows+1
-                        },
-                        "cell": {
-                            "userEnteredFormat": {
-                                "backgroundColor": {"red": 1, "green": 0.8, "blue": 0.8},
-                                "textFormat": {"bold": True}
-                            }
-                        },
-                        "fields": "userEnteredFormat(backgroundColor,textFormat)"
-                    }
-                }
-            ]
-        }
-    ).execute()
 
     # Append actual job rows
     rows = [[j[col] for col in HEADER] for j in jobs]
