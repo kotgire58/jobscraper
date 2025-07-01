@@ -41,17 +41,52 @@ def get_existing_links(sheet):
         return set()
 
 def append_jobs(sheet, jobs):
-    # Insert a header row before the new jobs
+    # Prepare label row
     now = datetime.now()
     label = f"🆕 New jobs from {now.strftime('%B %d')} - {'Morning' if now.hour < 12 else 'Evening'}"
     separator_row = [[label] + [""] * (len(HEADER) - 1)]
 
+    # Get current number of rows to know where to format
+    metadata = sheet.get(spreadsheetId=SPREADSHEET_ID).execute()
+    sheet_id = metadata["sheets"][0]["properties"]["sheetId"]
+    existing_values = sheet.values().get(
+        spreadsheetId=SPREADSHEET_ID,
+        range=f"{SHEET_NAME}!A:A"
+    ).execute()
+    num_existing_rows = len(existing_values.get("values", []))
+
+    # Append separator row
     sheet.values().append(
         spreadsheetId=SPREADSHEET_ID,
         range=f"{SHEET_NAME}!A2",
         valueInputOption="RAW",
         insertDataOption="INSERT_ROWS",
         body={"values": separator_row}
+    ).execute()
+
+    # Format the separator row red
+    sheet.batchUpdate(
+        spreadsheetId=SPREADSHEET_ID,
+        body={
+            "requests": [
+                {
+                    "repeatCell": {
+                        "range": {
+                            "sheetId": sheet_id,
+                            "startRowIndex": num_existing_rows,
+                            "endRowIndex": num_existing_rows + 1
+                        },
+                        "cell": {
+                            "userEnteredFormat": {
+                                "backgroundColor": {"red": 1, "green": 0.8, "blue": 0.8},
+                                "textFormat": {"bold": True}
+                            }
+                        },
+                        "fields": "userEnteredFormat(backgroundColor,textFormat)"
+                    }
+                }
+            ]
+        }
     ).execute()
 
     # Append actual job rows
@@ -63,6 +98,7 @@ def append_jobs(sheet, jobs):
         insertDataOption="INSERT_ROWS",
         body={"values": rows}
     ).execute()
+
 
 
 
